@@ -213,18 +213,19 @@ SQLite is not used as a substitute for PostgreSQL behaviour.
 
 The full merge contract is declared early and activated when a real artifact exists to validate.
 
-| Gate | Activation point |
-| --- | --- |
-| Ruff and mypy | Repository engineering foundation |
-| Django system and deployment checks | Django scaffold |
-| Container build and scan | First production container |
-| Migration consistency | First domain models |
-| Constraint tests | First database invariant |
-| Query budgets | First production selector |
-| OpenAPI validation and generated types | First DRF endpoint |
-| Playwright, HTML, accessibility, and runtime CSP | First HTMX journey |
-| Celery reliability and outbox delivery | First asynchronous workflow |
-| Deployment smoke tests | First preview environment |
+| Gate | Status | Activation point |
+| --- | --- | --- |
+| Repository structure policy | Active after the initial lockfile is committed | Repository engineering foundation |
+| Ruff and mypy | Configured; active after the initial lockfile is committed | Repository engineering foundation |
+| Django system and deployment checks | Configured; active after the initial lockfile is committed | Django scaffold |
+| Migration consistency | Configured for the custom user model | First persistent model |
+| Container build and scan | Deferred | First production container |
+| Constraint tests | Deferred | First database invariant |
+| Query budgets | Deferred | First production selector |
+| OpenAPI validation and generated types | Deferred | First DRF endpoint |
+| Playwright, HTML, accessibility, and runtime CSP | Deferred | First HTMX journey |
+| Celery reliability and outbox delivery | Deferred | First asynchronous workflow |
+| Deployment smoke tests | Deferred | First preview environment |
 
 A gate is marked as declared, active, deferred to a milestone, or retired. It does not silently skip.
 

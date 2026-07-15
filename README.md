@@ -36,7 +36,7 @@ It is not a generic job board, a basic CRUD tracker, an AI wrapper, or a React S
 
 ## Current Status
 
-The project is in the architecture and documentation phase. Application implementation has not started.
+The project has entered the repository-engineering phase. The Django foundation exists; CareerOps domain features have not started.
 
 | Area | Status |
 | --- | --- |
@@ -46,8 +46,10 @@ The project is in the architecture and documentation phase. Application implemen
 | Integrations boundary | Documented for the first capture slice |
 | Architecture diagrams | Drafted; final GitHub rendering pending |
 | Conceptual ERD | v1 drafted and parser-validated; Data Bridge persistence reserved for v2 |
-| Django scaffold | Not started |
-| CI/CD pipelines | Next engineering milestone |
+| Django scaffold | Implemented as the initial engineering foundation |
+| Custom user model | Implemented before domain migrations |
+| Health endpoints | Implemented |
+| Python quality workflows | Added; activation requires the committed `uv.lock` |
 | Product features | Not started |
 
 The documentation distinguishes accepted design, planned implementation, and verified implementation. Nothing is described as running until it exists and has been tested.
@@ -215,11 +217,22 @@ See [Engineering Standards](docs/engineering/ENGINEERING_STANDARDS.md) and [Secu
 
 ## Repository Structure
 
-Current documentation package:
+Current repository foundation:
 
 ```text
 careerops-platform/
 ├── README.md
+├── pyproject.toml
+├── manage.py
+├── compose.yaml
+├── config/
+│   └── settings/
+├── apps/
+│   ├── accounts/
+│   └── platform/
+├── tests/
+├── .github/
+│   └── workflows/
 └── docs/
     ├── README.md
     ├── product/
@@ -233,13 +246,33 @@ careerops-platform/
     └── planning/
 ```
 
-The Django project, application packages, tests, infrastructure, and `.github` workflows will be added during the repository-engineering milestone.
+The initial Django project, account boundary, health endpoints, architecture tests, and Python quality workflows are present. Product-domain applications and asynchronous infrastructure remain intentionally absent until their roadmap milestones.
 
 [Back to top](#careerops)
 
 ## Local Development
 
-Local development instructions will be added during the repository-engineering milestone.
+CareerOps uses Python 3.14 and `uv`. Python dependencies and tool configuration live in `pyproject.toml`; no `requirements.txt`, `pytest.ini`, `mypy.ini`, or standalone Ruff configuration is supported.
+
+```bash
+docker compose up -d postgres
+uv lock
+uv sync --locked --all-groups
+uv run python manage.py migrate --settings=config.settings.local
+uv run python manage.py runserver --settings=config.settings.local
+```
+
+Quality checks:
+
+```bash
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy
+uv run pytest
+uv run python manage.py check --deploy --settings=config.settings.production
+```
+
+The provided Compose service exposes PostgreSQL on `127.0.0.1:5432`. Copy `.env.example` to `.env` before local execution. The initial `uv.lock` must be generated with uv 0.11.28 or later in a Python 3.14 environment before the locked CI workflows can pass.
 
 [Back to top](#careerops)
 

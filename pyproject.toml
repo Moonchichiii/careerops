@@ -1,0 +1,112 @@
+[project]
+name = "careerops"
+version = "0.1.0"
+description = "Job intelligence and application operations platform."
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+  "Django[argon2]==6.0.7",
+  "django-environ==0.14.0",
+  "psycopg[binary]==3.3.4",
+]
+
+[dependency-groups]
+dev = [
+  "django-stubs[compatible-mypy]==6.0.7",
+  "mypy==2.3.0",
+  "pytest==9.1.1",
+  "pytest-django==4.12.0",
+  "ruff==0.15.21",
+]
+
+[tool.uv]
+package = false
+required-version = ">=0.11.28,<0.12"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["apps", "config", "tests"]
+extend-exclude = ["apps/**/migrations/*.py"]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",
+  "I",
+  "N",
+  "UP",
+  "B",
+  "C4",
+  "DJ",
+  "DTZ",
+  "G",
+  "LOG",
+  "PERF",
+  "PIE",
+  "PT",
+  "PTH",
+  "RET",
+  "RSE",
+  "RUF",
+  "S",
+  "SIM",
+  "TC",
+  "TRY",
+]
+ignore = [
+  "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"apps/**/migrations/*.py" = ["ALL"]
+"apps/**/test_*.py" = ["S101", "S106"]
+"tests/**/*.py" = ["S101", "S106"]
+"config/settings/tests.py" = ["S105"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.14"
+plugins = ["mypy_django_plugin.main"]
+strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_reexport = true
+show_error_codes = true
+pretty = true
+files = ["apps", "config", "tests", "manage.py"]
+exclude = ["apps/.*/migrations/.*\\.py$"]
+
+[[tool.mypy.overrides]]
+module = ["apps.*.migrations.*"]
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.tests"
+strict_settings = true
+strict_model_abstract_attrs = true
+
+[tool.pytest]
+minversion = "9.0"
+addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "-ra",
+]
+testpaths = ["apps", "tests"]
+python_files = ["test_*.py"]
+DJANGO_SETTINGS_MODULE = "config.settings.tests"
+markers = [
+  "integration: test requiring external infrastructure or a real service",
+]

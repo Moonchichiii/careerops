@@ -1,0 +1,31 @@
+name: Repository Policy
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    name: Repository policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Verify repository structure
+        run: |
+          test -f pyproject.toml
+          test -f .python-version
+          test -f uv.lock
+          test -f compose.yaml
+          test -f .env.example
+          test ! -f pytest.ini
+          test ! -f mypy.ini
+          test ! -f ruff.toml
+          test ! -f requirements.txt
+          test -z "$(find . -type f \( -name pytest.ini -o -name mypy.ini -o -name ruff.toml -o -name requirements.txt \) -print -quit)"
+          test "$(find docs -name '*.dbml' -type f | wc -l)" -eq 1

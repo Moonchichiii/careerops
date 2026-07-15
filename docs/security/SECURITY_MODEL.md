@@ -134,6 +134,7 @@ Deletion and export workflows will be designed against applicable privacy requir
 | Threat model | Deferred until the first concrete request and data flows exist |
 | Authentication implementation | Not started |
 | Authorization tests | Not started |
-| CSP and header verification | Not started |
-| Dependency and container scanning | Planned for repository engineering |
+| CSP and header verification | Baseline configured with automated response-header tests; execution awaits the initial lockfile |
+| Dependency scanning | Planned after the initial lockfile is committed |
+| Container scanning | Deferred until the first production container |
 | Privacy export and deletion | Deferred to candidate-evidence implementation |

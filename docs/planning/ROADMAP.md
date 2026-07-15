@@ -12,19 +12,23 @@ The roadmap is ordered by dependency and reversibility cost. It is the authority
 
 ### 1 — Repository engineering foundation
 
+**Status:** in progress.
+
 **Outcome:** executable Django scaffold with reproducible dependencies and enforceable quality checks.
 
 Planned work:
 
-- Python 3.14 and Django 6 project managed with `uv`
-- Settings separation
-- PostgreSQL development and test environments
-- Ruff, mypy, django-stubs, and pytest
-- Tailwind, HTMX, and TypeScript asset foundation
-- Docker development and production images
-- GitHub Actions for the gates applicable to the scaffold
-- Health and readiness endpoints
-- Baseline security headers and structured logging
+- [x] Python 3.14 and Django 6 project metadata managed with `uv`
+- [x] Settings separation
+- [x] PostgreSQL local development environment
+- [x] PostgreSQL-backed GitHub test service
+- [x] Ruff, mypy, django-stubs, and pytest configuration
+- [ ] Tailwind, HTMX, and TypeScript asset foundation
+- [ ] Docker development and production images
+- [x] GitHub Actions for the Python gates applicable to the scaffold
+- [x] Health and readiness endpoints
+- [x] Baseline security headers and structured logging
+- [ ] Generate and commit `uv.lock` in a Python 3.14 environment
 
 No CareerOps domain feature is required to complete this milestone.
 

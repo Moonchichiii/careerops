@@ -1,0 +1,22 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-policy:
+    uses: ./.github/workflows/_repository-policy.yml
+
+  python-quality:
+    uses: ./.github/workflows/_python-quality.yml
