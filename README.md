@@ -254,13 +254,25 @@ The initial Django project, account boundary, health endpoints, architecture tes
 
 CareerOps uses Python 3.14 and `uv`. Python dependencies and tool configuration live in `pyproject.toml`; no `requirements.txt`, `pytest.ini`, `mypy.ini`, or standalone Ruff configuration is supported.
 
-```bash
+On Windows, start Docker Desktop and wait for the Linux engine to report that it is running. Then initialise the environment from PowerShell:
+
+```powershell
+uv self update
+uv --version
+uv python install 3.14
+uv python pin 3.14
+
+Copy-Item .env.example .env -ErrorAction SilentlyContinue
+docker context use desktop-linux
 docker compose up -d postgres
+
 uv lock
 uv sync --locked --all-groups
 uv run python manage.py migrate --settings=config.settings.local
 uv run python manage.py runserver --settings=config.settings.local
 ```
+
+The committed VS Code workspace settings use `.venv\Scripts\python.exe`, load `.env`, run pytest discovery from `apps/` and `tests/`, use Ruff as the Python formatter, and leave type-checking ownership to mypy.
 
 Quality checks:
 
