@@ -1,0 +1,52 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:15"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: deps
+
+# Activate this entry when package.json, bun.lock, and .bun-version are
+# committed. Bun version updates are supported, while Bun security
+# updates are not currently supplied by Dependabot. OSV-Scanner and
+# `bun audit` provide the vulnerability gates.
+#
+#  - package-ecosystem: bun
+#    directory: /
+#    schedule:
+#      interval: weekly
+#      day: monday
+#      time: "06:30"
+#      timezone: Europe/Paris
+#    open-pull-requests-limit: 5
+#    groups:
+#      bun-dependencies:
+#        patterns:
+#          - "*"
+#    commit-message:
+#      prefix: deps

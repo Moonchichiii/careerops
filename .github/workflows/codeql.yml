@@ -1,0 +1,108 @@
+name: CodeQL
+
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+    types:
+      - checks_requested
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "43 4 * * 2"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  packages: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-typescript:
+    name: Detect TypeScript sources
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      present: ${{ steps.detect.outputs.present }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        with:
+          persist-credentials: false
+
+      - name: Detect JavaScript or TypeScript source
+        id: detect
+        shell: bash
+        run: |
+          if find . -type f                     \( -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' \)                     -not -path './.git/*'                     -not -path './.venv/*'                     -not -path './node_modules/*'                     -print -quit | grep -q .; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  analyze-python:
+    name: Analyze Python
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
+        with:
+          languages: python
+          queries: security-extended
+
+      - name: Analyze Python
+        uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
+        with:
+          category: /language:python
+
+  analyze-typescript:
+    name: Analyze JavaScript and TypeScript
+    needs:
+      - detect-typescript
+    if: needs.detect-typescript.outputs.present == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+
+      - name: Analyze JavaScript and TypeScript
+        uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
+        with:
+          category: /language:javascript-typescript
