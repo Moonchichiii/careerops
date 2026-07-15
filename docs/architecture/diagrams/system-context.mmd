@@ -1,0 +1,100 @@
+---
+title: CareerOps system context
+---
+flowchart LR
+    candidate([Candidate])
+    coach([Career coach])
+
+    subgraph clients["Client interfaces"]
+        direction TB
+        web["Django templates + HTMX<br/>Primary product interface"]
+        extension["Browser extension<br/>First external client — planned"]
+        csv["CSV import<br/>First-party batch channel"]
+        mobile["Native mobile app<br/>Deferred second client"]
+    end
+
+    subgraph platform["CareerOps modular monolith"]
+        direction TB
+        django["Django application<br/>Domain services and selectors"]
+        api["Django REST Framework<br/>External API contracts"]
+        integrations["Integrations / Data Bridge<br/>Envelopes · Provenance · Contracts"]
+        registry["Job Registry<br/>Evidence to canonical opportunity"]
+        downstream["Candidate Evidence · Opportunity Matching<br/>Application Operations"]
+        shared["Shared Platform Mechanisms<br/>Idempotency · Operations · Audit · Outbox"]
+    end
+
+    subgraph runtime["Runtime dependencies"]
+        direction TB
+        postgres[(PostgreSQL)]
+        redis[(Redis)]
+        rabbit[(RabbitMQ)]
+        celery["Celery workers"]
+        storage[(Object storage)]
+    end
+
+    subgraph external["External systems"]
+        direction TB
+        sources["Approved job sources"]
+        email["Email and notification providers"]
+        webhooks["Webhook consumers"]
+    end
+
+    subgraph observe["Operational observability — planned"]
+        direction TB
+        otel["OpenTelemetry"]
+        prometheus["Prometheus"]
+        grafana["Grafana"]
+    end
+
+    candidate --> web
+    coach --> web
+    candidate --> extension
+    candidate --> csv
+    candidate -. future .-> mobile
+
+    web --> django
+    extension --> api
+    mobile -. future .-> api
+    api --> django
+
+    django --> integrations
+    integrations --> registry
+    django --> downstream
+    django --> shared
+    integrations --> shared
+    registry --> shared
+    downstream --> shared
+
+    django --> postgres
+    django --> redis
+    integrations --> postgres
+    shared --> postgres
+    shared --> rabbit
+    rabbit --> celery
+    celery --> postgres
+    celery --> storage
+
+    sources --> integrations
+    celery --> email
+    celery --> webhooks
+
+    django -. telemetry .-> otel
+    celery -. telemetry .-> otel
+    django -. metrics .-> prometheus
+    celery -. metrics .-> prometheus
+    otel -. traces .-> grafana
+    prometheus -. metrics .-> grafana
+
+    classDef actor fill:#f8fafc,stroke:#334155,stroke-width:1px,color:#0f172a
+    classDef client fill:#eff6ff,stroke:#2563eb,stroke-width:1px,color:#172554
+    classDef core fill:#f1f5f9,stroke:#0f172a,stroke-width:2px,color:#0f172a
+    classDef runtime fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#0f172a
+    classDef ext fill:#fffbeb,stroke:#d97706,stroke-width:1px,color:#451a03
+    classDef obs fill:#f5f3ff,stroke:#7c3aed,stroke-width:1px,color:#2e1065
+
+    class candidate,coach actor
+    class web,extension,csv,mobile client
+    class django,api,integrations,registry,downstream,shared core
+    class postgres,redis,rabbit,celery,storage runtime
+    class sources,email,webhooks ext
+    class otel,prometheus,grafana obs

@@ -1,0 +1,30 @@
+---
+title: Append-only job resolution decision lifecycle
+---
+stateDiagram-v2
+    [*] --> Pending
+
+    Pending --> MatchedExisting: sufficient evidence for existing identity
+    Pending --> CreatedNew: no safe existing identity
+    Pending --> Ambiguous: several plausible candidates
+    Pending --> Rejected: observation is not a valid job opportunity
+    Pending --> Ignored: accepted policy excludes processing
+
+    MatchedExisting --> Superseded: corrected by later decision
+    CreatedNew --> Superseded: corrected by later decision
+    Ambiguous --> Superseded: review or new evidence creates decision
+    Rejected --> Superseded: corrected by later decision
+    Ignored --> Superseded: corrected by later decision
+
+    MatchedExisting --> [*]
+    CreatedNew --> [*]
+    Ambiguous --> [*]
+    Rejected --> [*]
+    Ignored --> [*]
+    Superseded --> [*]
+
+    note right of Superseded
+        Existing rows are never rewritten.
+        A later JobResolution points back to
+        the decision it supersedes.
+    end note

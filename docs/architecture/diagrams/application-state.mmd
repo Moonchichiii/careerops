@@ -1,0 +1,36 @@
+---
+title: Application lifecycle
+---
+stateDiagram-v2
+    [*] --> Preparing
+
+    Preparing --> Applied: application submitted
+    Preparing --> Withdrawn: candidate stops preparation
+
+    Applied --> RecruiterContact: recruiter responds
+    Applied --> Rejected: application declined
+    Applied --> Withdrawn: candidate withdraws
+
+    RecruiterContact --> TechnicalInterview: technical stage scheduled
+    RecruiterContact --> Rejected: process ends
+    RecruiterContact --> Withdrawn: candidate withdraws
+
+    TechnicalInterview --> FinalInterview: advances
+    TechnicalInterview --> Rejected: process ends
+    TechnicalInterview --> Withdrawn: candidate withdraws
+
+    FinalInterview --> Offer: offer received
+    FinalInterview --> Rejected: process ends
+    FinalInterview --> Withdrawn: candidate withdraws
+
+    Offer --> Archived: outcome recorded
+    Rejected --> Archived: outcome recorded
+    Withdrawn --> Archived: outcome recorded
+
+    Archived --> [*]
+
+    note right of Preparing
+        current status is a read model.
+        Every change appends an immutable
+        ApplicationTransition in the same transaction.
+    end note

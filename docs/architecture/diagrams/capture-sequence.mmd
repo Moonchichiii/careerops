@@ -1,0 +1,68 @@
+---
+title: Capture and canonicalize a job observation
+---
+sequenceDiagram
+    autonumber
+    actor User
+    participant Client as HTMX UI / Extension / CSV import
+    participant Boundary as Django / DRF capture boundary
+    participant Idem as Idempotency mechanism
+    participant Bridge as Integrations / Data Bridge
+    participant DB as PostgreSQL
+    participant Outbox as Outbox dispatcher
+    participant Broker as RabbitMQ
+    participant Worker as Celery worker
+    participant Registry as Job Registry service
+
+    User->>Client: Submit capture or import
+    Client->>Boundary: Capture request
+    Boundary->>Idem: Check key and request fingerprint
+
+    alt Unexpired retry with identical request
+        Idem-->>Boundary: Existing acceptance response
+        Boundary-->>Client: 202 + existing operation location
+    else New request
+        rect rgb(239, 246, 255)
+            Note over Bridge,DB: Atomic transport-acceptance transaction
+            Boundary->>Bridge: Accept payload and provenance
+            Bridge->>DB: Check envelope replay
+            alt Envelope replay
+                DB-->>Bridge: Existing envelope
+            else New envelope
+                Bridge->>DB: Persist immutable InboundEnvelope
+                Bridge->>DB: Persist operation, audit, and outbox events
+                DB-->>Bridge: Commit
+            end
+        end
+
+        Bridge-->>Boundary: Accepted envelope and operation
+        Boundary->>Idem: Store 202 acceptance response
+        Boundary-->>Client: 202 Accepted + Location
+    end
+
+    Outbox->>DB: Poll unpublished envelope events
+    DB-->>Outbox: envelope.accepted
+    Outbox->>Broker: Publish event
+    Broker->>Worker: Deliver contract-processing task
+
+    Worker->>DB: Read immutable envelope
+    Worker->>Worker: Validate and translate provider-neutral contract
+    Worker->>Registry: Accept job evidence
+    Registry->>DB: Check exact source replay
+
+    alt Exact source replay
+        DB-->>Registry: Existing JobObservation
+    else New observation or source revision
+        Registry->>DB: Persist immutable JobObservation and outbox event
+        Registry->>DB: Commit
+    end
+
+    Worker->>DB: Persist versioned normalization
+    Worker->>Worker: Resolve job identity
+    Worker->>DB: Commit resolution transaction
+    Worker->>DB: Complete operation result
+
+    Client->>Boundary: GET operation status
+    Boundary->>DB: Read current operation
+    DB-->>Boundary: completed / ambiguous / failed
+    Boundary-->>Client: HTML fragment or API representation

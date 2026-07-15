@@ -1,0 +1,62 @@
+---
+title: Future evidence-grounded RAG boundary
+---
+flowchart LR
+    subgraph truth["Deterministic system of record"]
+        direction TB
+        job["CanonicalJob + versioned requirements"]
+        evidence["Candidate evidence documents + chunks"]
+        scoring["Deterministic opportunity scoring"]
+    end
+
+    subgraph retrieval["Hybrid retrieval — future"]
+        direction TB
+        fts["PostgreSQL full-text search"]
+        vector["pgvector semantic similarity"]
+        filters["Workspace and metadata filters"]
+        ranked["Ranked evidence context"]
+    end
+
+    subgraph generation["Advisory generation — future"]
+        direction TB
+        llm["LLM explanation or draft"]
+        citations["Claim-level citations"]
+        review["Human review"]
+    end
+
+    subgraph prohibited["Never delegated to RAG"]
+        direction TB
+        authority["Authorisation and workspace isolation"]
+        identity["Job identity resolution"]
+        transitions["Application state transitions"]
+        scoreAuthority["Numerical scoring authority"]
+        writes["Direct domain-state writes"]
+    end
+
+    job --> scoring
+    evidence --> scoring
+
+    job --> fts
+    evidence --> fts
+    job --> vector
+    evidence --> vector
+    filters --> fts
+    filters --> vector
+    fts --> ranked
+    vector --> ranked
+
+    scoring --> llm
+    ranked --> llm
+    llm --> citations --> review
+
+    prohibited -. policy boundary .-> llm
+
+    classDef deterministic fill:#ecfeff,stroke:#0e7490,stroke-width:2px,color:#083344
+    classDef retrieve fill:#eff6ff,stroke:#2563eb,stroke-width:1px,color:#172554
+    classDef advisory fill:#f5f3ff,stroke:#7c3aed,stroke-width:1px,color:#2e1065
+    classDef denied fill:#fff7ed,stroke:#c2410c,stroke-width:2px,color:#431407
+
+    class job,evidence,scoring deterministic
+    class fts,vector,filters,ranked retrieve
+    class llm,citations,review advisory
+    class authority,identity,transitions,scoreAuthority,writes denied

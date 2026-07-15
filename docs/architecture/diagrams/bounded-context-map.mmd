@@ -1,0 +1,51 @@
+---
+title: CareerOps bounded-context map
+---
+flowchart LR
+    identity["Identity and Access<br/>Account identity and authentication"]
+    workspaces["Workspaces<br/>Tenant boundary and memberships"]
+    integrations["Integrations<br/>Envelopes · Provenance · Versioned contracts"]
+    registry["Job Registry<br/>Observation · Normalization<br/>Identity resolution · Canonical job"]
+    evidence["Candidate Evidence<br/>Experience and supporting evidence"]
+    matching["Opportunity Matching<br/>Deterministic fit and explanation"]
+    applications["Application Operations<br/>Applications · Interviews · Follow-ups"]
+    notifications["Notifications<br/>User-facing delivery"]
+    analytics["Analytics<br/>Career and product outcomes"]
+    audit["Audit and Compliance<br/>Policy evidence and immutable audit trail"]
+    platform["Shared Platform Mechanisms<br/>Idempotency · Operations · Outbox"]
+
+    identity --> workspaces
+    workspaces --> integrations
+    workspaces --> registry
+    workspaces --> evidence
+    workspaces --> applications
+
+    integrations -->|"submit versioned capture contract<br/>application service"| registry
+    registry -->|"canonical_job.created / updated<br/>outbox events"| matching
+    evidence -->|"candidate evidence<br/>application service"| matching
+    matching -->|"opportunity assessment"| applications
+    applications --> notifications
+
+    registry -. domain events .-> analytics
+    matching -. domain events .-> analytics
+    applications -. domain events .-> analytics
+
+    identity --> platform
+    workspaces --> platform
+    integrations --> platform
+    registry --> platform
+    evidence --> platform
+    matching --> platform
+    applications --> platform
+    notifications --> platform
+    analytics --> platform
+
+    platform --> audit
+
+    classDef specified fill:#e0f2fe,stroke:#0369a1,stroke-width:2px,color:#082f49
+    classDef accepted fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#0f172a
+    classDef shared fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#422006
+
+    class integrations,registry specified
+    class identity,workspaces,evidence,matching,applications,notifications,analytics,audit accepted
+    class platform shared

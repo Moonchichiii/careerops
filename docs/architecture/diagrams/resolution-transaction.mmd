@@ -1,0 +1,73 @@
+---
+title: Job identity resolution transaction boundary
+---
+flowchart TB
+    input(["Versioned JobNormalization ready"])
+
+    subgraph transaction["ATOMIC TRANSACTION — short, synchronous, correctness-critical"]
+        direction TB
+        lock["1. Acquire resolution lock<br/>workspace + identity bucket"]
+        recheck["2. Recheck canonical candidates<br/>inside protected section"]
+
+        subgraph aggregates["Separate aggregates coordinated by the identity-resolution service"]
+            direction LR
+            resolution["3. Append JobResolution<br/>outcome · evidence · algorithm version"]
+            canonical["4. Create or enrich CanonicalJob<br/>traceable field delta · version increment"]
+            observation["5. Advance JobObservation<br/>resolved or ambiguous"]
+        end
+
+        audit["6. Append audit records"]
+        outbox["7. Append outbox events<br/>canonical_job.created / updated"]
+        commit{{"8. COMMIT"}}
+
+        lock --> recheck --> aggregates
+        aggregates --> audit --> outbox --> commit
+    end
+
+    subgraph postcommit["AFTER COMMIT — asynchronous and eventually consistent"]
+        direction TB
+        nudge["on_commit nudge<br/>latency optimisation only"]
+        dispatcher["Outbox dispatcher<br/>durable polling is the correctness mechanism"]
+        rabbit["RabbitMQ"]
+        workers["Celery workers<br/>routed by queue"]
+
+        subgraph internal["Internal consumers"]
+            direction LR
+            requirements["Requirement extraction"]
+            matching["Opportunity matching"]
+            notifications["Notifications"]
+            analytics["Analytics projections"]
+            search["Search projections"]
+            rag["RAG indexing — future"]
+        end
+
+        subgraph sideeffects["External side effects"]
+            direction LR
+            webhook["Signed webhook delivery"]
+            externalapi["External API calls"]
+        end
+
+        nudge -.-> dispatcher
+        dispatcher --> rabbit --> workers
+        workers --> internal
+        workers --> sideeffects
+    end
+
+    ambiguous(["Ambiguous is a valid outcome<br/>No canonical association is forced<br/>Observation remains available for review"])
+
+    input --> lock
+    commit ==> nudge
+    commit ==> dispatcher
+    observation -. when ambiguous .-> ambiguous
+
+    classDef critical fill:#e0f2fe,stroke:#0369a1,stroke-width:2px,color:#082f49
+    classDef aggregate fill:#f0f9ff,stroke:#0284c7,stroke-width:1px,color:#0c4a6e
+    classDef async fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#0f172a
+    classDef external fill:#fff7ed,stroke:#c2410c,stroke-width:1px,color:#431407
+    classDef outcome fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#422006
+
+    class lock,recheck,audit,outbox,commit critical
+    class resolution,canonical,observation aggregate
+    class nudge,dispatcher,rabbit,workers,requirements,matching,notifications,analytics,search,rag async
+    class webhook,externalapi external
+    class ambiguous outcome

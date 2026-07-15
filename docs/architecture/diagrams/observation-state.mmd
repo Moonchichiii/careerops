@@ -1,0 +1,30 @@
+---
+title: Job observation processing lifecycle
+---
+stateDiagram-v2
+    [*] --> Received
+
+    Received --> Normalizing: worker starts
+    Normalizing --> Normalized: versioned interpretation persisted
+    Normalizing --> Failed: processing error
+
+    Normalized --> Resolving: identity resolution starts
+    Resolving --> Resolved: existing or new canonical identity
+    Resolving --> Ambiguous: safe automatic decision unavailable
+    Resolving --> Failed: processing error
+
+    Failed --> Normalizing: retry normalization
+    Failed --> Resolving: retry resolution when normalization exists
+    Ambiguous --> Resolving: new evidence or human review
+
+    Resolved --> [*]
+
+    note right of Received
+        Source evidence is immutable.
+        Processing knowledge may advance.
+    end note
+
+    note right of Ambiguous
+        Valid outcome, not failure.
+        No canonical association is forced.
+    end note
