@@ -29,7 +29,6 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: config.settings.tests
-      DJANGO_SECRET_KEY: ci-only-secret-key
       DJANGO_ALLOWED_HOSTS: localhost,testserver
       TEST_DATABASE_URL: postgresql://careerops:careerops@127.0.0.1:5432/careerops_test
       DATABASE_URL: postgresql://careerops:careerops@127.0.0.1:5432/careerops_test
@@ -53,6 +52,13 @@ jobs:
       - name: Synchronize locked dependencies
         run: uv sync --locked --all-groups
 
+      # Disposable key generated only for this CI run.
+      # This is never used by local, staging, or production environments.
+      - name: Generate ephemeral Django secret key
+        shell: bash
+        run: |
+          echo "DJANGO_SECRET_KEY=$(uv run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')" >> "$GITHUB_ENV"
+
       - name: Check formatting
         run: uv run ruff format --check .
 
@@ -70,7 +76,6 @@ jobs:
       - name: Run deployment checks
         env:
           DJANGO_SETTINGS_MODULE: config.settings.production
-          DJANGO_SECRET_KEY: 7c929ec8d3074e1083e5e70c19cfeb3c4bd229599ec5cb68d7927a49417427f2
           DJANGO_ALLOWED_HOSTS: example.com
         run: >-
           uv run python manage.py check --deploy --fail-level WARNING
