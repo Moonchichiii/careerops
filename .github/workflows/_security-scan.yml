@@ -3,8 +3,7 @@ name: Reusable Security Scan
 on:
   workflow_call:
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   python-dependency-audit:
@@ -16,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           persist-credentials: false
 
@@ -35,13 +34,14 @@ jobs:
       - name: Synchronize locked Python dependencies
         run: uv sync --locked --all-groups
 
+      # uv intentionally creates the project environment without pip.
+      # Run pip-audit as an isolated, exactly pinned uv tool and point it
+      # at the project's installed site-packages directory.
       - name: Audit installed Python dependencies
-        uses: pypa/gh-action-pip-audit@1220774d901786e6f652ae159f7b6bc8fea6d266 # v1.1.0
-        with:
-          virtual-environment: .venv
-          local: true
-          vulnerability-service: pypi
-          summary: true
+        shell: bash
+        run: |
+          site_packages="$(uv run python -c 'import site; print(site.getsitepackages()[0])')"
+          uvx --from pip-audit==2.10.1 pip-audit                     --strict                     --progress-spinner off                     --path "$site_packages"
 
   bun-dependency-audit:
     name: Bun dependency audit
@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           persist-credentials: false
 
@@ -101,7 +101,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@e8d4307400f9427dba7cb98e488d6ab85f1cec5f # v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           persist-credentials: false
 

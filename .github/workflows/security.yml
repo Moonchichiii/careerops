@@ -14,10 +14,7 @@ on:
     - cron: "17 5 * * 1"
   workflow_dispatch:
 
-permissions:
-  actions: read
-  contents: read
-  security-events: write
+permissions: {}
 
 concurrency:
   group: security-${{ github.workflow }}-${{ github.ref }}
@@ -26,6 +23,9 @@ concurrency:
 jobs:
   dependency-and-workflow-security:
     name: Dependency and workflow security
+    permissions:
+      actions: read
+      contents: read
     uses: ./.github/workflows/_security-scan.yml
 
   osv-full-scan:
@@ -34,6 +34,10 @@ jobs:
       github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@3adb4b14a2b0623876d18d863a498b785fb3752d # v2.3.8
     with:
       scan-args: |-
@@ -46,6 +50,10 @@ jobs:
     if: >-
       github.event_name == 'pull_request' ||
       github.event_name == 'merge_group'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@3adb4b14a2b0623876d18d863a498b785fb3752d # v2.3.8
     with:
       scan-args: |-
