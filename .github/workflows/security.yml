@@ -34,7 +34,7 @@ jobs:
       github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@3adb4b14a2b0623876d18d863a498b785fb3752d # v2.3.8
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@a82132c0bd6c7261ffcb78e754c46c70ab57ad9a # v2.3.8
     with:
       scan-args: |-
         --include-git-root
@@ -46,7 +46,7 @@ jobs:
     if: >-
       github.event_name == 'pull_request' ||
       github.event_name == 'merge_group'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@3adb4b14a2b0623876d18d863a498b785fb3752d # v2.3.8
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@a82132c0bd6c7261ffcb78e754c46c70ab57ad9a # v2.3.8
     with:
       scan-args: |-
         --include-git-root
