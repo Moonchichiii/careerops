@@ -92,6 +92,12 @@ exclude = ["apps/.*/migrations/.*\\.py$"]
 module = ["apps.*.migrations.*"]
 ignore_errors = true
 
+# django-environ does not publish inline typing metadata. Keep the exception
+# scoped to the third-party module rather than weakening application checks.
+[[tool.mypy.overrides]]
+module = ["environ", "environ.*"]
+ignore_missing_imports = true
+
 [tool.django-stubs]
 django_settings_module = "config.settings.tests"
 strict_settings = true

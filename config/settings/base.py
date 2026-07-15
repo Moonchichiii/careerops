@@ -60,7 +60,7 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": env.db_url(
         "DATABASE_URL",
-        default="postgresql://careerops:careerops@127.0.0.1:5432/careerops",
+        default="postgresql://careerops:careerops@127.0.0.1:55432/careerops",
     ),
 }
 DATABASES["default"]["CONN_MAX_AGE"] = 60

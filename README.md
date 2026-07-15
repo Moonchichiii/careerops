@@ -284,7 +284,7 @@ uv run pytest
 uv run python manage.py check --deploy --settings=config.settings.production
 ```
 
-The provided Compose service exposes PostgreSQL on `127.0.0.1:5432`. Copy `.env.example` to `.env` before local execution. The initial `uv.lock` must be generated with uv 0.11.28 or later in a Python 3.14 environment before the locked CI workflows can pass.
+The provided Compose service exposes PostgreSQL on `127.0.0.1:55432`. Copy `.env.example` to `.env` before local execution. The initial `uv.lock` must be generated with uv 0.11.28 or later in a Python 3.14 environment before the locked CI workflows can pass.
 
 [Back to top](#careerops)
 

@@ -29,7 +29,7 @@ class UserManager(BaseUserManager["User"]):
         user.save(using=self._db)
         return user
 
-    def get_by_natural_key(self, username: str) -> User:
+    def get_by_natural_key(self, username: str | None) -> User:
         return self.get(email__iexact=username)
 
     def create_superuser(
