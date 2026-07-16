@@ -28,7 +28,7 @@ Planned work:
 - [x] GitHub Actions for the Python gates applicable to the scaffold
 - [x] Health and readiness endpoints
 - [x] Baseline security headers and structured logging
-- [ ] Generate and commit `uv.lock` in a Python 3.14 environment
+- [x] Generate and commit `uv.lock` in a Python 3.14 environment
 
 No CareerOps domain feature is required to complete this milestone.
 
@@ -39,7 +39,7 @@ No CareerOps domain feature is required to complete this milestone.
 Scope:
 
 - First-party HTMX capture
-- Browser-extension API capture contract
+- Browser-extension capture API and explicit user-triggered client
 - CSV batch import
 - Inbound envelope persistence and provenance
 - Import-run status for batch capture
@@ -109,17 +109,20 @@ Scope:
 - CV and evidence version used
 - Offer and rejection outcomes
 
-### 7 — Observability and analytics
+### 7 — Observability, analytics, and production readiness
 
-**Outcome:** operational objectives and career-outcome analysis based on real workflows.
+**Outcome:** operational objectives and career-outcome analysis based on real workflows, followed by a production deployment with exercised smoke tests and rollback.
 
 Scope:
 
+- Initial deployment-target decision
 - Service-level indicators
 - Alert rules
 - Grafana dashboards
 - Source and application conversion analysis
 - Match and evidence-gap analysis
+- Production deployment with smoke tests and rollback
+- Production security hardening
 - Product analytics only where a concrete product decision requires it
 
 ## Deferred Delivery Tracks
@@ -143,7 +146,7 @@ These tracks are planned possibilities, not hidden additions to the numbered mil
 | DuckDB analytics | Deferred until an analytical export or offline report has a real dataset | Analytics milestone |
 | Idempotency expiry | Expired transport keys may create a new operation; source replay protection remains independent | Capture-slice implementation |
 | Evidence chunk size | Conceptual only | Candidate-evidence retrieval tests |
-| Deployment target | No cloud platform selected | Repository-engineering milestone |
+| Deployment target | No cloud platform selected | Milestone 7 entry, before production deployment |
 | Kubernetes | Deferred | Only after a real orchestration constraint exists |
 | Product analytics | Deferred | When a specific behavioural decision requires it |
 
