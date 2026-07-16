@@ -5,7 +5,7 @@
   "scripts": {
     "web:dev": "vite build --watch --config frontend/web-assets/vite.config.ts",
     "web:format": "biome format --write biome.json package.json frontend/web-assets",
-    "web:lint": "biome check biome.json package.json frontend/web-assets",
+    "web:lint": "biome check --error-on-warnings biome.json package.json frontend/web-assets",
     "web:typecheck": "tsc --project frontend/web-assets/tsconfig.json",
     "web:build": "vite build --config frontend/web-assets/vite.config.ts",
     "web:check": "bun run web:lint && bun run web:typecheck && bun run web:build",
@@ -17,5 +17,8 @@
     "tailwindcss": "4.3.2",
     "typescript": "7.0.2",
     "vite": "8.1.5"
+  },
+  "dependencies": {
+    "htmx.org": "2.0.10"
   }
 }

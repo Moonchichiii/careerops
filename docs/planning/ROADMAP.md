@@ -24,7 +24,7 @@ Planned work:
 - [x] PostgreSQL-backed GitHub test service
 - [x] Ruff, mypy, django-stubs, and pytest configuration
 - [x] Tailwind, TypeScript, and Vite asset foundation
-- [ ] Base application shell and HTMX foundation
+- [x] Base application shell and HTMX foundation
 - [ ] Docker development and production images
 - [x] GitHub Actions for the Python gates applicable to the scaffold
 - [x] Health and readiness endpoints

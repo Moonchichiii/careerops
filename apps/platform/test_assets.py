@@ -4,6 +4,7 @@ import json
 from typing import TYPE_CHECKING
 
 import pytest
+from django.conf import settings
 from django.template import Context, Template
 from django.test import override_settings
 from django.urls import reverse
@@ -14,6 +15,14 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from django.test import Client
+
+
+def test_vite_static_source_directory_is_always_registered() -> None:
+    assert settings.VITE_STATIC_SOURCE_DIR.is_dir()
+    assert settings.VITE_STATIC_SOURCE_DIR in settings.STATICFILES_DIRS
+    assert settings.VITE_BUILD_DIR == (
+        settings.VITE_STATIC_SOURCE_DIR / settings.VITE_STATIC_PREFIX
+    )
 
 
 def _write_manifest(directory: Path) -> Path:

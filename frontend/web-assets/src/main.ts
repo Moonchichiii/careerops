@@ -1,5 +1,6 @@
 import "vite/modulepreload-polyfill";
-import "./styles.css";
+import "./styles/app.css";
+import "./ts/htmx";
 
 const status = document.querySelector<HTMLElement>("[data-asset-status]");
 

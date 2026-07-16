@@ -90,10 +90,11 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 VITE_STATIC_PREFIX = "careerops"
-VITE_DIST_DIR = BASE_DIR / "frontend" / "web-assets" / "dist"
-VITE_MANIFEST_PATH = VITE_DIST_DIR / ".vite" / "manifest.json"
+VITE_STATIC_SOURCE_DIR = BASE_DIR / "frontend" / "web-assets" / "static"
+VITE_BUILD_DIR = VITE_STATIC_SOURCE_DIR / VITE_STATIC_PREFIX
+VITE_MANIFEST_PATH = VITE_BUILD_DIR / ".vite" / "manifest.json"
 
-STATICFILES_DIRS = [(VITE_STATIC_PREFIX, VITE_DIST_DIR)] if VITE_DIST_DIR.is_dir() else []
+STATICFILES_DIRS = [VITE_STATIC_SOURCE_DIR]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

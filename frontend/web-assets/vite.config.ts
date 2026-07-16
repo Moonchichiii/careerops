@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [tailwindcss()],
   build: {
     manifest: true,
-    outDir: "dist",
+    outDir: "static/careerops",
     emptyOutDir: true,
     rolldownOptions: {
       input: "src/main.ts",

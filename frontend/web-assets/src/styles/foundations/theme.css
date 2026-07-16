@@ -1,0 +1,20 @@
+@theme {
+  --color-paper: #f3f1ea;
+  --color-paper-raised: #fffdf8;
+  --color-ink: #171714;
+  --color-ink-muted: #5d5b54;
+  --color-rule: #c9c5b9;
+  --color-marker: #f2c230;
+  --color-positive: #315c45;
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "Fragment Mono", ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: light;
+  --shell-max-width: 88rem;
+  --shell-gutter: clamp(1rem, 3vw, 2.5rem);
+  --motion-duration-fast: 120ms;
+}

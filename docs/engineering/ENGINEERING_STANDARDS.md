@@ -151,7 +151,7 @@ Asset rules:
 - HTMX partials do not include stylesheet or script tags; the hosting page owns every asset required by its fragments.
 - Source styles grow by responsibility—foundations, reusable components, layouts, and page composition—rather than through one unbounded stylesheet.
 - Vite transpilation does not replace strict `tsc --noEmit` checking.
-- Generated `dist` and collected `staticfiles` output are not committed.
+- Generated Vite bundles and collected `staticfiles` output are not committed; only the static source-directory placeholder is tracked.
 
 ## Typing and Linting
 

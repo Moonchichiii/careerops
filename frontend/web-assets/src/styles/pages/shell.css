@@ -1,0 +1,83 @@
+.shell-page {
+  container-name: shell-page;
+  container-type: inline-size;
+}
+
+.shell-hero {
+  max-width: 58rem;
+  margin-block-end: clamp(2.5rem, 7vw, 5rem);
+}
+
+.shell-kicker {
+  margin: 0 0 1rem;
+  color: var(--color-ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shell-title {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.shell-introduction {
+  max-width: 46rem;
+  margin: 1.5rem 0 0;
+  color: var(--color-ink-muted);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.65;
+}
+
+.shell-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.8fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.shell-principles {
+  border-block-start: 1px solid var(--color-ink);
+  padding-block-start: 1rem;
+}
+
+.shell-principles__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.shell-principles__list {
+  display: grid;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  gap: 1rem;
+  list-style: none;
+}
+
+.shell-principles__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  color: var(--color-ink-muted);
+  line-height: 1.55;
+}
+
+.shell-principles__index {
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+@container shell-page (max-width: 48rem) {
+  .shell-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,49 @@
+.ui-status-panel {
+  display: grid;
+  gap: 1.25rem;
+  border: 1px solid var(--color-rule);
+  background: var(--color-paper-raised);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  transition: opacity var(--motion-duration-fast) ease;
+}
+
+.ui-status-panel[data-state="confirmed"] {
+  border-inline-start: 0.35rem solid var(--color-positive);
+}
+
+.ui-status-panel.htmx-swapping {
+  opacity: 0.45;
+}
+
+.ui-status-panel__header {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ui-status-panel__state {
+  width: fit-content;
+  background: var(--color-marker);
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ui-status-panel__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.05;
+}
+
+.ui-status-panel__detail,
+.ui-status-panel__fallback {
+  margin: 0;
+  color: var(--color-ink-muted);
+  line-height: 1.65;
+}
+
+.ui-status-panel__fallback {
+  font-size: 0.8125rem;
+}
