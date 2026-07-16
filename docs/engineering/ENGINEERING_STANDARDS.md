@@ -10,6 +10,7 @@ These standards define how CareerOps code is structured, checked, and accepted. 
 - [Database and Query Discipline](#database-and-query-discipline)
 - [Transactions and Asynchronous Work](#transactions-and-asynchronous-work)
 - [HTMX and TypeScript](#htmx-and-typescript)
+- [Web Asset Architecture](#web-asset-architecture)
 - [Typing and Linting](#typing-and-linting)
 - [Testing](#testing)
 - [CI Gate Activation](#ci-gate-activation)
@@ -137,6 +138,21 @@ TypeScript does not duplicate domain validation or maintain a second authoritati
 
 The browser baseline excludes inline scripts, inline event handlers, `eval`, dynamically inserted scripts, and unreviewed third-party assets.
 
+## Web Asset Architecture
+
+Django owns page and partial rendering. Vite owns production asset bundling and emits a manifest that Django resolves through a typed template tag.
+
+Asset rules:
+
+- Tailwind CSS 4 uses its CSS-first configuration through `@tailwindcss/vite`.
+- No PostCSS configuration or `tailwind.config` file exists unless a future requirement cannot be expressed through the CSS-first contract and the exception is documented.
+- Vite emits hashed assets beneath the CareerOps staticfiles prefix.
+- Django templates load external stylesheet and module tags from the generated manifest.
+- HTMX partials do not include stylesheet or script tags; the hosting page owns every asset required by its fragments.
+- Source styles grow by responsibility—foundations, reusable components, layouts, and page composition—rather than through one unbounded stylesheet.
+- Vite transpilation does not replace strict `tsc --noEmit` checking.
+- Generated `dist` and collected `staticfiles` output are not committed.
+
 ## Typing and Linting
 
 ### mypy
@@ -158,6 +174,10 @@ Custom managers and QuerySets receive explicit types so query vocabulary does no
 Ruff owns formatting, imports, common Python defects, modernization, Django-specific checks, pytest style, simplification, and selected performance rules.
 
 Type completeness remains mypy's responsibility. Line wrapping remains the formatter's responsibility. Rules that generate routine false-positive suppressions are not enabled merely for maximum rule count.
+
+### Browser assets
+
+Biome owns formatting and linting for TypeScript, CSS, JSON, and browser-facing configuration. TypeScript runs separately in strict no-emit mode. Vite is responsible for bundling, hashing, and manifest generation rather than type correctness.
 
 ## Testing
 
@@ -218,6 +238,7 @@ The full merge contract is declared early and activated when a real artifact exi
 | Repository structure policy | Active after the initial lockfile is committed | Repository engineering foundation |
 | Ruff and mypy | Configured; active after the initial lockfile is committed | Repository engineering foundation |
 | Django system and deployment checks | Configured; active after the initial lockfile is committed | Django scaffold |
+| Frontend lint, strict TypeScript, Vite build, dependency audit, and static collection | Active | Web asset foundation |
 | Migration consistency | Configured for the custom user model | First persistent model |
 | Container build and scan | Deferred | First production container |
 | Constraint tests | Deferred | First database invariant |
