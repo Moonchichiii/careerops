@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% partialdef shell-status %}
+  <section
+    id="shell-status"
+    class="ui-status-panel"
+    data-shell-status
+    data-state="{{ shell_status.state }}"
+    aria-labelledby="shell-status-title"
+    aria-live="polite"
+  >
+    <header class="ui-status-panel__header">
+      <span class="ui-status-panel__state">{{ shell_status.label }}</span>
+      <h2 id="shell-status-title" class="ui-status-panel__title">
+        {{ shell_status.title }}
+      </h2>
+    </header>
+
+    <p class="ui-status-panel__detail">{{ shell_status.detail }}</p>
+
+    <div>
+      <a
+        class="ui-button"
+        href="{% url 'shell' %}?status=refreshed"
+        hx-get="{% url 'shell' %}?status=refreshed"
+        hx-target="#shell-status"
+        hx-swap="outerHTML"
+      >
+        Run partial check
+      </a>
+    </div>
+
+    <p class="ui-status-panel__fallback">
+      Without JavaScript this link performs a normal full-page request.
+    </p>
+  </section>
+{% endpartialdef shell-status %}
+
+{% block title %}Desk · CareerOps{% endblock title %}
+
+{% block content %}
+  <article class="shell-page">
+    <header class="shell-hero">
+      <p class="shell-kicker">CareerOps Desk</p>
+      <h1 class="shell-title">Your career operating system.</h1>
+      <p class="shell-introduction">
+        A server-rendered workspace for capturing opportunities, evaluating
+        fit and moving deliberate career decisions forward.
+      </p>
+    </header>
+
+    <div class="shell-grid">
+      <section class="shell-principles" aria-labelledby="shell-principles-title">
+        <h2 id="shell-principles-title" class="shell-principles__title">
+          Foundation contract
+        </h2>
+
+        <ol class="shell-principles__list">
+          <li class="shell-principles__item">
+            <span class="shell-principles__index">01</span>
+            <span>Django renders complete pages and reusable fragments.</span>
+          </li>
+          <li class="shell-principles__item">
+            <span class="shell-principles__index">02</span>
+            <span>HTMX enhances navigation without replacing normal HTTP.</span>
+          </li>
+          <li class="shell-principles__item">
+            <span class="shell-principles__index">03</span>
+            <span>External bundles preserve the strict content-security policy.</span>
+          </li>
+        </ol>
+      </section>
+
+      {% partial shell-status %}
+    </div>
+  </article>
+{% endblock content %}

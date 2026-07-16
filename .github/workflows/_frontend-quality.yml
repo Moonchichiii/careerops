@@ -59,7 +59,7 @@ jobs:
           from pathlib import Path
 
           manifest_path = Path(
-              "frontend/web-assets/dist/.vite/manifest.json"
+              "frontend/web-assets/static/careerops/.vite/manifest.json"
           )
           manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
           entry = manifest["src/main.ts"]

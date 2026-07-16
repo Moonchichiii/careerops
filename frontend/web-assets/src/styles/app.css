@@ -1,0 +1,13 @@
+@import "tailwindcss" source(none);
+@import "./foundations/theme.css";
+@import "./foundations/base.css";
+@import "./foundations/accessibility.css";
+@import "./layouts/application-shell.css";
+@import "./components/button.css";
+@import "./components/message.css";
+@import "./components/status-panel.css";
+@import "./pages/shell.css";
+
+@source "../**/*.ts";
+@source "../../../../templates/**/*.html";
+@source "../../../../apps/**/templates/**/*.html";

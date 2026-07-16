@@ -1,0 +1,74 @@
+{% load vite %}
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}CareerOps{% endblock title %}</title>
+    {% vite_assets "src/main.ts" %}
+    {% block head %}{% endblock head %}
+  </head>
+
+  <body class="app-body">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <div class="app-shell">
+      <header class="app-masthead">
+        <div class="app-masthead__inner">
+          <a class="app-brand" href="{% url 'shell' %}">
+            <span class="app-brand__mark" aria-hidden="true">CO</span>
+
+            <span class="app-brand__text">
+              <strong class="app-brand__name">CareerOps</strong>
+              <span class="app-brand__descriptor">Career operating system</span>
+            </span>
+          </a>
+
+          <nav class="app-nav" aria-label="Primary">
+            <ul class="app-nav__list">
+              <li>
+                <a
+                  class="app-nav__link"
+                  href="{% url 'shell' %}"
+                  {% if active_navigation == "shell" %}aria-current="page"{% endif %}
+                >
+                  Desk
+                </a>
+              </li>
+              <li>
+                <a class="app-nav__link" href="{% url 'asset-smoke' %}">
+                  Asset check
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      {% if messages %}
+        <section class="ui-messages" aria-label="Notifications" aria-live="polite">
+          <ul class="ui-messages__list">
+            {% for message in messages %}
+              <li
+                class="ui-message"
+                data-level="{{ message.tags|default:'info' }}"
+              >
+                {{ message }}
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      <main id="main-content" class="app-main" tabindex="-1">
+        {% block content %}{% endblock content %}
+      </main>
+
+      <footer class="app-footer">
+        <div class="app-footer__inner">
+          CareerOps · server-rendered application foundation
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

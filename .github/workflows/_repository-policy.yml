@@ -32,7 +32,9 @@ jobs:
           test -f frontend/web-assets/tsconfig.json
           test -f frontend/web-assets/vite.config.ts
           test -f frontend/web-assets/src/main.ts
-          test -f frontend/web-assets/src/styles.css
+          test -f frontend/web-assets/src/styles/app.css
+          test ! -f frontend/web-assets/src/styles.css
+          test -f frontend/web-assets/static/.gitignore
           test ! -f package-lock.json
           test ! -f yarn.lock
           test ! -f pnpm-lock.yaml
