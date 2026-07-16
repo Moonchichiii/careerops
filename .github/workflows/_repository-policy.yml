@@ -25,9 +25,21 @@ jobs:
           test -f uv.lock
           test -f compose.yaml
           test -f .env.example
+          test -f .bun-version
+          test -f package.json
+          test -f bun.lock
+          test -f biome.json
+          test -f frontend/web-assets/tsconfig.json
+          test -f frontend/web-assets/vite.config.ts
+          test -f frontend/web-assets/src/main.ts
+          test -f frontend/web-assets/src/styles.css
+          test ! -f package-lock.json
+          test ! -f yarn.lock
+          test ! -f pnpm-lock.yaml
           test ! -f pytest.ini
           test ! -f mypy.ini
           test ! -f ruff.toml
           test ! -f requirements.txt
           test -z "$(find . -type f \( -name pytest.ini -o -name mypy.ini -o -name ruff.toml -o -name requirements.txt \) -print -quit)"
+          test -z "$(find . -type f \( -name 'postcss.config.*' -o -name 'tailwind.config.*' -o -name 'eslint.config.*' \) -print -quit)"
           test "$(find docs -name '*.dbml' -type f | wc -l)" -eq 1

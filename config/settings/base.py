@@ -88,6 +88,12 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+VITE_STATIC_PREFIX = "careerops"
+VITE_DIST_DIR = BASE_DIR / "frontend" / "web-assets" / "dist"
+VITE_MANIFEST_PATH = VITE_DIST_DIR / ".vite" / "manifest.json"
+
+STATICFILES_DIRS = [(VITE_STATIC_PREFIX, VITE_DIST_DIR)] if VITE_DIST_DIR.is_dir() else []
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

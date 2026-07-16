@@ -20,3 +20,6 @@ jobs:
 
   python-quality:
     uses: ./.github/workflows/_python-quality.yml
+
+  frontend-quality:
+    uses: ./.github/workflows/_frontend-quality.yml
