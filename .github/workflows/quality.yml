@@ -23,3 +23,6 @@ jobs:
 
   frontend-quality:
     uses: ./.github/workflows/_frontend-quality.yml
+
+  container-quality:
+    uses: ./.github/workflows/_container-quality.yml
