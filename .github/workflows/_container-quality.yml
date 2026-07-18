@@ -1,0 +1,79 @@
+name: Container Quality
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    name: Production image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+
+      - name: Build production image
+        run: |
+          docker build \
+            --target runtime \
+            --tag careerops:ci \
+            .
+
+      - name: Verify production dependency boundary
+        run: |
+          docker run \
+            --rm \
+            --entrypoint python \
+            careerops:ci \
+            -c "import importlib.util; import django; import gunicorn; assert importlib.util.find_spec('pytest') is None; assert importlib.util.find_spec('ruff') is None; assert importlib.util.find_spec('mypy') is None"
+
+      - name: Verify non-root runtime
+        run: |
+          test \
+            "$(docker image inspect careerops:ci --format '{{.Config.User}}')" \
+            = "careerops"
+
+      - name: Smoke production runtime
+        run: |
+          docker run \
+            --detach \
+            --rm \
+            --name careerops-ci \
+            --publish 127.0.0.1:8000:8000 \
+            --env DJANGO_SECRET_KEY=careerops-ci-runtime-only \
+            --env DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost \
+            careerops:ci
+
+          cleanup() {
+            docker logs careerops-ci || true
+            docker stop careerops-ci >/dev/null 2>&1 || true
+          }
+
+          trap cleanup EXIT
+
+          for attempt in $(seq 1 30); do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              --header "Host: 127.0.0.1" \
+              --header "X-Forwarded-Proto: https" \
+              http://127.0.0.1:8000/health/live/
+            then
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          echo "Production container did not become healthy."
+          exit 1

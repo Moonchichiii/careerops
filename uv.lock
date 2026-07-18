@@ -102,6 +102,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "django", extra = ["argon2"] },
     { name = "django-environ" },
+    { name = "gunicorn" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
@@ -118,6 +119,7 @@ dev = [
 requires-dist = [
     { name = "django", extras = ["argon2"], specifier = "==6.0.7" },
     { name = "django-environ", specifier = "==0.14.0" },
+    { name = "gunicorn", specifier = "==26.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.3.4" },
 ]
 
@@ -233,6 +235,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/36/50/917f7224ea470e89cdcdc93d3dfe75b8391adf976cf12f2ecdb5f5d122be/django_stubs_ext-6.0.7.tar.gz", hash = "sha256:c3172c5126614fd2a44d0196b313b44c21f717cb09477ba52b447d41f4ce613e", size = 6665, upload-time = "2026-07-14T10:07:56.933Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/83/65/4d73fce956b5ebf26449259664360e539fbe95f0e86be396c28b636ba72a/django_stubs_ext-6.0.7-py3-none-any.whl", hash = "sha256:53a9c7c5a7c7e718cc6308cfce1e7470f2cac0b9d38dbcd60fbfa82704f1d592", size = 10362, upload-time = "2026-07-14T10:07:55.653Z" },
+]
+
+[[package]]
+name = "gunicorn"
+version = "26.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6d/b7/a4a3f632f823e432ce6bc65f62961b7980c898c77f075a2f7118cb3846fe/gunicorn-26.0.0.tar.gz", hash = "sha256:ca9346f85e3a4aeeb64d491045c16b9a35647abd37ea15efe53080eb8b090baf", size = 727286, upload-time = "2026-05-05T06:38:25.529Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e6/40/9c2384fc2be4ad25dd4a49decd5ad9ea5a3639814c11bd40ab77cb9f0a14/gunicorn-26.0.0-py3-none-any.whl", hash = "sha256:40233d26a5f0d1872916188c276e21641155111c2853f0c2cd55260aec0d24fc", size = 212009, upload-time = "2026-05-05T06:38:23.007Z" },
 ]
 
 [[package]]

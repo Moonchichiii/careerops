@@ -24,6 +24,10 @@ jobs:
           test -f .python-version
           test -f uv.lock
           test -f compose.yaml
+          test -f Dockerfile
+          test -f .dockerignore
+          test -f docker/development/start.sh
+          test -f .github/workflows/_container-quality.yml
           test -f .env.example
           test -f .bun-version
           test -f package.json
