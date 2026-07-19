@@ -12,7 +12,7 @@ The roadmap is ordered by dependency and reversibility cost. It is the authority
 
 ### 1 — Repository engineering foundation
 
-**Status:** in progress.
+**Status:** complete.
 
 **Outcome:** executable Django scaffold with reproducible dependencies and enforceable quality checks.
 
@@ -25,7 +25,7 @@ Planned work:
 - [x] Ruff, mypy, django-stubs, and pytest configuration
 - [x] Tailwind, TypeScript, and Vite asset foundation
 - [x] Base application shell and HTMX foundation
-- [ ] Docker development and production images
+- [x] Docker development and production images
 - [x] GitHub Actions for the Python gates applicable to the scaffold
 - [x] Health and readiness endpoints
 - [x] Baseline security headers and structured logging

@@ -49,7 +49,10 @@ The project has entered the repository-engineering phase. The Django foundation 
 | Django scaffold | Implemented as the initial engineering foundation |
 | Custom user model | Implemented before domain migrations |
 | Health endpoints | Implemented |
-| Python quality workflows | Added; activation requires the committed `uv.lock` |
+| Web asset pipeline and application shell | Implemented and verified |
+| Container development stack | Implemented and verified |
+| Production image | Multi-stage, non-root, and CI-verified |
+| Python quality workflows | Active and enforced in CI |
 | Product features | Not started |
 
 The documentation distinguishes accepted design, planned implementation, and verified implementation. Nothing is described as running until it exists and has been tested.
@@ -252,41 +255,109 @@ The initial Django project, account boundary, health endpoints, architecture tes
 
 ## Local Development
 
-CareerOps uses Python 3.14 and `uv`. Python dependencies and tool configuration live in `pyproject.toml`; no `requirements.txt`, `pytest.ini`, `mypy.ini`, or standalone Ruff configuration is supported.
+CareerOps supports both containerized and host-based development. The
+containerized workflow is the default because it verifies the Django,
+PostgreSQL, and frontend-asset boundaries together.
 
-On Windows, start Docker Desktop and wait for the Linux engine to report that it is running. Then initialise the environment from PowerShell:
+### Containerized development
+
+Start Docker Desktop with its Linux engine, then run from PowerShell:
 
 ```powershell
-uv self update
-uv --version
-uv python install 3.14
-uv python pin 3.14
-
 Copy-Item .env.example .env -ErrorAction SilentlyContinue
 docker context use desktop-linux
-docker compose up -d postgres
 
-uv lock
-uv sync --locked --all-groups
-uv run python manage.py migrate --settings=config.settings.local
-uv run python manage.py runserver --settings=config.settings.local
+docker compose up `
+    --build `
+    --detach `
+    --wait `
+    --wait-timeout 240
+
+docker compose ps
 ```
 
-The committed VS Code workspace settings use `.venv\Scripts\python.exe`, load `.env`, run pytest discovery from `apps/` and `tests/`, use Ruff as the Python formatter, and leave type-checking ownership to mypy.
+The stack exposes:
 
-Quality checks:
+- CareerOps at `http://127.0.0.1:8000`
+- PostgreSQL at `127.0.0.1:55432`
+- a locked Bun and Vite asset watcher
+- automatic Django migrations before application startup
 
-```bash
+Verify the running application:
+
+```powershell
+Invoke-RestMethod `
+    -Uri "http://127.0.0.1:8000/health/live/"
+
+Invoke-RestMethod `
+    -Uri "http://127.0.0.1:8000/health/ready/"
+```
+
+Inspect or stop the stack:
+
+```powershell
+docker compose logs app --tail 100
+docker compose logs assets --tail 80
+docker compose down
+```
+
+`docker compose down` preserves the named PostgreSQL volume. Use
+`docker compose down --volumes` only when the local database should be
+discarded intentionally.
+
+### Host-based development
+
+Python dependencies and tool configuration live in `pyproject.toml`. The
+repository does not support parallel `requirements.txt`, `pytest.ini`,
+`mypy.ini`, or standalone Ruff configuration files.
+
+```powershell
+uv python install 3.14
+uv python pin 3.14
+uv sync --locked --all-groups
+
+bun install --frozen-lockfile --ignore-scripts
+
+Copy-Item .env.example .env -ErrorAction SilentlyContinue
+docker compose up --detach postgres
+
+uv run python manage.py migrate `
+    --settings=config.settings.local
+
+uv run python manage.py runserver `
+    --settings=config.settings.local
+```
+
+Run `bun run web:dev` in another terminal for continuous asset rebuilding.
+
+### Production image
+
+```powershell
+docker build `
+    --target runtime `
+    --tag careerops:local `
+    .
+```
+
+The production image includes compiled and collected static assets, runs
+Gunicorn as the non-root `careerops` user, and excludes development
+dependencies.
+
+### Quality checks
+
+```powershell
+bun run web:check
+bun run security:audit
+
+uv lock --check
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy
 uv run pytest
-uv run python manage.py check --deploy --settings=config.settings.production
+
+docker compose config --quiet
+docker build --target runtime --tag careerops:local .
 ```
-
-The provided Compose service exposes PostgreSQL on `127.0.0.1:55432`. Copy `.env.example` to `.env` before local execution. The initial `uv.lock` must be generated with uv 0.11.28 or later in a Python 3.14 environment before the locked CI workflows can pass.
-
-[Back to top](#careerops)
 
 ## License
 
