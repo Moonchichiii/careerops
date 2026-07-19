@@ -40,6 +40,36 @@
                   Asset check
                 </a>
               </li>
+
+              {% if request.user.is_authenticated %}
+                <li>
+                  <span class="app-nav__identity">
+                    {{ request.user.email }}
+                  </span>
+                </li>
+                <li>
+                  <form
+                    class="app-nav__form"
+                    method="post"
+                    action="{% url 'accounts:logout' %}"
+                  >
+                    {% csrf_token %}
+                    <button class="app-nav__link app-nav__button" type="submit">
+                      Sign out
+                    </button>
+                  </form>
+                </li>
+              {% else %}
+                <li>
+                  <a
+                    class="app-nav__link"
+                    href="{% url 'accounts:login' %}"
+                    {% if active_navigation == "account" %}aria-current="page"{% endif %}
+                  >
+                    Sign in
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </nav>
         </div>

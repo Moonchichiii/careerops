@@ -84,6 +84,26 @@
   color: var(--color-paper-raised);
 }
 
+.app-nav__identity {
+  display: inline-flex;
+  padding: 0.625rem 0.75rem;
+  align-items: center;
+  color: #c5c3bb;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.app-nav__form {
+  margin: 0;
+}
+
+.app-nav__button {
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
 .app-main {
   width: min(100%, var(--shell-max-width));
   margin-inline: auto;
