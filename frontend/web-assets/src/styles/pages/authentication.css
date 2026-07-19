@@ -1,0 +1,64 @@
+.auth-page {
+  display: grid;
+  width: min(100%, 44rem);
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.auth-header {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-card {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--color-rule);
+  background: var(--color-paper-raised);
+}
+
+.auth-card__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.auth-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.auth-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.auth-label {
+  font-weight: 700;
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-ink);
+  border-radius: 0;
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
+  font: inherit;
+}
+
+.auth-input:focus-visible {
+  outline: 3px solid var(--color-marker);
+  outline-offset: 2px;
+}
+
+.auth-errors,
+.errorlist {
+  margin: 0;
+  color: #7a231f;
+}
+
+.errorlist {
+  padding-inline-start: 1.25rem;
+}

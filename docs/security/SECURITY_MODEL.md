@@ -132,7 +132,7 @@ Deletion and export workflows will be designed against applicable privacy requir
 | --- | --- |
 | Security boundaries | Documented |
 | Threat model | Deferred until the first concrete request and data flows exist |
-| Authentication implementation | Not started |
+| Authentication implementation | Session login and POST-only logout implemented with CSRF protection, explicit production cookie policy, safe redirect handling, authenticated shell states, and PostgreSQL-backed failed-login throttling |
 | Authorization tests | Not started |
 | CSP and header verification | Baseline configured with automated response-header tests; execution awaits the initial lockfile |
 | Dependency scanning | Planned after the initial lockfile is committed |

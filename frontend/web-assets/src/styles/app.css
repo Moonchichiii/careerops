@@ -7,6 +7,7 @@
 @import "./components/message.css";
 @import "./components/status-panel.css";
 @import "./pages/shell.css";
+@import "./pages/authentication.css";
 
 @source "../**/*.ts";
 @source "../../../../templates/**/*.html";

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in · CareerOps{% endblock title %}
+
+{% block content %}
+  <article class="auth-page">
+    <header class="auth-header">
+      <p class="shell-kicker">CareerOps Account</p>
+      <h1 class="shell-title">Sign in to your desk.</h1>
+      <p class="shell-introduction">
+        Use the email address and password associated with your CareerOps account.
+      </p>
+    </header>
+
+    <section class="auth-card" aria-labelledby="sign-in-title">
+      <h2 id="sign-in-title" class="auth-card__title">Account access</h2>
+
+      {% if form.non_field_errors %}
+        <div class="auth-errors" role="alert">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'accounts:login' %}" class="auth-form">
+        {% csrf_token %}
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div class="auth-field">
+          <label class="auth-label" for="{{ form.username.id_for_label }}">
+            {{ form.username.label }}
+          </label>
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="{{ form.password.id_for_label }}">
+            {{ form.password.label }}
+          </label>
+          {{ form.password }}
+          {{ form.password.errors }}
+        </div>
+
+        <div>
+          <button class="ui-button" type="submit">Sign in</button>
+        </div>
+      </form>
+    </section>
+  </article>
+{% endblock content %}

@@ -68,6 +68,23 @@ DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 AUTH_USER_MODEL = "accounts.User"
 
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "shell"
+LOGOUT_REDIRECT_URL = "shell"
+
+LOGIN_THROTTLE_FAILURE_LIMIT = env.int(
+    "LOGIN_THROTTLE_FAILURE_LIMIT",
+    default=5,
+)
+LOGIN_THROTTLE_WINDOW_SECONDS = env.int(
+    "LOGIN_THROTTLE_WINDOW_SECONDS",
+    default=900,
+)
+LOGIN_THROTTLE_BLOCK_SECONDS = env.int(
+    "LOGIN_THROTTLE_BLOCK_SECONDS",
+    default=900,
+)
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
