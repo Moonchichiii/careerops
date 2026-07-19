@@ -3,12 +3,13 @@ from __future__ import annotations
 import importlib
 import json
 from typing import TYPE_CHECKING
+from unittest.mock import patch
 
 import pytest
 from django.test import Client, override_settings
 from django.urls import reverse
 
-from apps.accounts.models import User
+from apps.accounts.models import LoginThrottleState, User
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -217,3 +218,60 @@ def test_production_cookie_policy_is_explicit(
     assert production.CSRF_COOKIE_SECURE is True
     assert production.CSRF_COOKIE_HTTPONLY is True
     assert production.CSRF_COOKIE_SAMESITE == "Lax"
+
+
+@override_settings(
+    LOGIN_THROTTLE_FAILURE_LIMIT=3,
+    LOGIN_THROTTLE_WINDOW_SECONDS=300,
+    LOGIN_THROTTLE_BLOCK_SECONDS=600,
+)
+def test_repeated_failed_logins_are_throttled(
+    client: Client,
+    tmp_path: Path,
+) -> None:
+    user = User.objects.create_user(
+        email="mats@example.com",
+        password=_valid_password(),
+    )
+    manifest_path = _write_manifest(tmp_path)
+
+    with override_settings(
+        VITE_MANIFEST_PATH=manifest_path,
+        VITE_STATIC_PREFIX="careerops",
+    ):
+        for _attempt in range(3):
+            response = client.post(
+                reverse("accounts:login"),
+                {
+                    "username": user.email,
+                    "password": "incorrect-password",
+                },
+            )
+
+            assert response.status_code == 200
+
+        with patch(
+            "django.contrib.auth.forms.authenticate",
+            side_effect=AssertionError("Blocked login attempted password authentication."),
+        ):
+            blocked_response = client.post(
+                reverse("accounts:login"),
+                {
+                    "username": user.email,
+                    "password": "incorrect-password",
+                },
+            )
+
+    assert blocked_response.status_code == 200
+    assert "_auth_user_id" not in client.session
+
+    form = blocked_response.context["form"]
+    non_field_errors = form.non_field_errors().as_data()
+
+    assert len(non_field_errors) == 1
+    assert non_field_errors[0].code == "invalid_login"
+
+    state = LoginThrottleState.objects.get()
+
+    assert state.failure_count == 3
+    assert state.blocked_until is not None

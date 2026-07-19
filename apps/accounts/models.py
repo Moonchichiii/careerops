@@ -56,3 +56,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self) -> str:
         return self.first_name or self.email
+
+
+class LoginThrottleState(models.Model):
+    scope_hash = models.CharField(
+        max_length=64,
+        primary_key=True,
+        editable=False,
+    )
+    failure_count = models.PositiveSmallIntegerField(default=0)
+    window_started_at = models.DateTimeField(default=timezone.now)
+    blocked_until = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "login throttle state"
+        verbose_name_plural = "login throttle states"
+
+    def __str__(self) -> str:
+        return f"Login throttle state {self.scope_hash[:12]}"
